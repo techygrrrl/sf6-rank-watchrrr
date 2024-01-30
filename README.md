@@ -1,6 +1,6 @@
-# sf6 stats watcher
+# sf6 rank watchrrr
 
-Periodically refreshes the page to watch changes to the LP value on the profile.
+A set of tools to provide Street Fighter 6 streamers with an overlay to watch their rank.
 
 - [Usage](#usage)
   - [Server](#server)
