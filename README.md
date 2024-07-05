@@ -8,6 +8,8 @@ A set of tools to provide Street Fighter 6 streamers with an overlay to watch th
   - [User script](#user-script)
 - [Credits](#credits)
 
+![](./cover.png)
+
 ## Usage
 
 ### Server
