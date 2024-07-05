@@ -41,6 +41,10 @@ body {
   color: rgb(255, 204, 0);
 }
 
+.rank-up-progress__mr {
+  color: rgb(0, 179, 255);
+}
+
 .rank-up-progress__bar {
   margin: 4px 0;
 
