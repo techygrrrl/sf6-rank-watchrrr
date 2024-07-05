@@ -4,6 +4,7 @@ const selectors = {
   progress: 'js-progress',
   lp: 'js-lp',
   goalLp: 'js-goal-lp',
+  mrElement: 'js-mr',
 }
 
 let rankImageElement = null
@@ -11,6 +12,7 @@ let usernameElement = null
 let progressElement = null
 let lpElement = null
 let goalLpElement = null
+let mrElement = null
 
 document.addEventListener('DOMContentLoaded', () => {
   perform()
@@ -32,6 +34,9 @@ function perform() {
 
   goalLpElement = document.getElementById(selectors.goalLp)
   if (!goalLpElement) throw new Error('Missing goalLpElement')
+
+  mrElement = document.getElementById(selectors.mrElement)
+  if (!mrElement) throw new Error('Missing mrElement')
 
   // console.log('All elements OK')
 
@@ -75,6 +80,16 @@ function listenForRankUpdates() {
     const nextRankLp = getNextRankLP(data.lp)
     const prevRankLp = getPreviousRankLP(data.lp)
 
+    // Add MR and if we have MR, hide the goal LP since it's not relevant
+    if (data.mr) {
+      goalLpElement.style.display = 'none'
+      mrElement.style.display = 'block'
+    } else {
+      goalLpElement.style.display = 'block'
+      mrElement.style.display = 'none'
+    }
+
+    mrElement.innerText = `${data.mr} MR`
     lpElement.innerText = data.lp
     goalLpElement.innerText = nextRankLp
 
