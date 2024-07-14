@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "PORT=55743 node server/main.js",
-    "client": "DEV_SERVER_PORT=55744 DEV_SERVER_ROOT=./docs dev-server"
+    "client": "DEV_SERVER_PORT=55744 DEV_SERVER_ROOT=./client dev-server"
   },
   "author": "",
   "license": "ISC",
