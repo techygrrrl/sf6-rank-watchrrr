@@ -51,13 +51,73 @@ function getConfig() {
   // Host
   /////////////////
   const host = decodeURIComponent(params.get('host') || 'localhost%3A55743')
+  const mode = params.get('mode') || 'ws' // 'ws' | 'kv'
+  const token = params.get('token')
+  const id = params.get('id')
 
   return {
+    id,
     host,
+    mode,
+    token,
   }
 }
 
 function listenForRankUpdates() {
+  const { mode } = getConfig()
+
+  switch (mode) {
+    case 'ws':
+      return listenForRankUpdatesWithWebSockets()
+    case 'kv':
+      return listenForRankUpdatesWithLongPolling()
+  }
+}
+
+function listenForRankUpdatesWithLongPolling() {
+  const { host, token, id } = getConfig()
+
+  const endpoint = `${host}/api/get`
+  const refreshInterval = 120 * 1000
+
+  const fetchPlayerData = () => {
+    window.fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ key: 'sf6-rank-watchrrr-' + id })
+    })
+    .then((res) => {
+      return res.json()
+    })
+    .then((playerData) => {
+      if (!playerData.value) {
+        console.error('no player data')
+        return
+      }
+
+      try {
+        const data = JSON.parse(playerData.value)
+        updateRankData(data)
+      } catch (e) {
+        console.error(e)
+      }
+    })
+    .catch(e => {
+      console.error('fetch error', e)
+    })
+  }
+
+  fetchPlayerData()
+
+  setInterval(() => {
+    fetchPlayerData()
+  }, refreshInterval)
+}
+
+function listenForRankUpdatesWithWebSockets() {
   const { host } = getConfig()
   const socket = new WebSocket(`ws://${host}`)
 
@@ -69,39 +129,43 @@ function listenForRankUpdates() {
     const { data } = JSON.parse(message.data)
     console.log('Got data', data)
 
-    // Add username
-    usernameElement.innerText = data.fighter_name
-
-    // Add image
-    const imageSrc = `images/${getRankImageName(data)}`
-    rankImageElement.src = imageSrc
-
-    // Add LP
-    const nextRankLp = getNextRankLP(data.lp)
-    const prevRankLp = getPreviousRankLP(data.lp)
-
-    // Add MR and if we have MR, hide the goal LP since it's not relevant
-    if (data.mr) {
-      goalLpElement.style.display = 'none'
-      mrElement.style.display = 'block'
-    } else {
-      goalLpElement.style.display = 'block'
-      mrElement.style.display = 'none'
-    }
-
-    mrElement.innerText = `${data.mr} MR`
-    lpElement.innerText = data.lp
-    goalLpElement.innerText = nextRankLp
-
-    // Progress
-    const percentage = calculatePercentage({
-      startLp: prevRankLp,
-      currentLp: data.lp,
-      goalLp: nextRankLp
-    })
-    // console.log('percentage', percentage)
-    progressElement.style.width = percentage + '%'
+    updateRankData(data)
   })
+}
+
+function updateRankData(data) {
+  // Add username
+  usernameElement.innerText = data.fighter_name
+
+  // Add image
+  const imageSrc = `images/${getRankImageName(data)}`
+  rankImageElement.src = imageSrc
+
+  // Add LP
+  const nextRankLp = getNextRankLP(data.lp)
+  const prevRankLp = getPreviousRankLP(data.lp)
+
+  // Add MR and if we have MR, hide the goal LP since it's not relevant
+  if (data.mr) {
+    goalLpElement.style.display = 'none'
+    mrElement.style.display = 'block'
+  } else {
+    goalLpElement.style.display = 'block'
+    mrElement.style.display = 'none'
+  }
+
+  mrElement.innerText = `${data.mr} MR`
+  lpElement.innerText = data.lp
+  goalLpElement.innerText = nextRankLp
+
+  // Progress
+  const percentage = calculatePercentage({
+    startLp: prevRankLp,
+    currentLp: data.lp,
+    goalLp: nextRankLp
+  })
+  // console.log('percentage', percentage)
+  progressElement.style.width = percentage + '%'
 }
 
 function calculatePercentage({ startLp, currentLp, goalLp }) {
