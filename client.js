@@ -93,7 +93,7 @@ function listenForRankUpdatesWithLongPolling() {
       return res.json()
     })
     .then((playerData) => {
-      if (!playerData.value) {
+      if (!playerData?.value) {
         console.error('no player data')
         return
       }
