@@ -60,7 +60,7 @@
     /////////////////
     // Refresh time
     /////////////////
-    const minRefreshTime = 60; // Refresh responsibly (minimum time is 1 refresh per minute)
+    const minRefreshTime = 30; // Refresh responsibly (minimum time is 1 refresh every 30 seconds)
     const refreshTimeString = localStorage.getItem("refresh_time") || "120"; // default: 2 mins
     let refresh = parseInt(refreshTimeString);
     if (isNaN(refresh)) {
