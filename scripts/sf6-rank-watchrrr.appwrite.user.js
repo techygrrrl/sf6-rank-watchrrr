@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name        [AppWrite] Watch the rank for a Street Fighter 6 profile
-// @match       https://techygrrrl.stream/*
 // @match       https://www.streetfighter.com/6/buckler/api/en/card/*
 // @grant       none
 // @version     1.0
