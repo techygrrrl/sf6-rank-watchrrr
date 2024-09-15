@@ -51,15 +51,25 @@ function getConfig() {
   // Host
   /////////////////
   const host = decodeURIComponent(params.get('host') || 'localhost%3A55743')
-  const mode = params.get('mode') || 'ws' // 'ws' | 'kv'
+  const mode = params.get('mode') || 'ws' // 'ws' | 'kv' | 'appwrite'
   const token = params.get('token')
   const id = params.get('id')
+
+  /////////////////
+  // AppWrite config
+  /////////////////
+  const appWriteProjectId = params.get('appwrite_project_id')
+  const appWriteDatabaseId = params.get('appwrite_database_id')
+  const appWriteCollectionId = params.get('appwrite_collection_id')
 
   return {
     id,
     host,
     mode,
     token,
+    appWriteProjectId,
+    appWriteDatabaseId,
+    appWriteCollectionId,
   }
 }
 
@@ -71,8 +81,11 @@ function listenForRankUpdates() {
       return listenForRankUpdatesWithWebSockets()
     case 'kv':
       return listenForRankUpdatesWithLongPolling()
+    case 'appwrite':
+      return listenForRankUpdatesWithAppWrite()
   }
 }
+
 
 function listenForRankUpdatesWithLongPolling() {
   const { host, token, id } = getConfig()
@@ -81,33 +94,34 @@ function listenForRankUpdatesWithLongPolling() {
   const refreshInterval = 120 * 1000
 
   const fetchPlayerData = () => {
-    window.fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ key: 'sf6-rank-watchrrr-' + id })
-    })
-    .then((res) => {
-      return res.json()
-    })
-    .then((playerData) => {
-      if (!playerData || !playerData.value) {
-        console.error('no player data')
-        return
-      }
+    window
+      .fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ key: 'sf6-rank-watchrrr-' + id }),
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then((playerData) => {
+        if (!playerData || !playerData.value) {
+          console.error('no player data')
+          return
+        }
 
-      try {
-        const data = JSON.parse(playerData.value)
-        updateRankData(data)
-      } catch (e) {
-        console.error(e)
-      }
-    })
-    .catch(e => {
-      console.error('fetch error', e)
-    })
+        try {
+          const data = JSON.parse(playerData.value)
+          updateRankData(data)
+        } catch (e) {
+          console.error(e)
+        }
+      })
+      .catch((e) => {
+        console.error('fetch error', e)
+      })
   }
 
   fetchPlayerData()
@@ -162,7 +176,7 @@ function updateRankData(data) {
   const percentage = calculatePercentage({
     startLp: prevRankLp,
     currentLp: data.lp,
-    goalLp: nextRankLp
+    goalLp: nextRankLp,
   })
   // console.log('percentage', percentage)
   progressElement.style.width = percentage + '%'
@@ -172,7 +186,7 @@ function calculatePercentage({ startLp, currentLp, goalLp }) {
   // return parseInt((currentLp / goalLp) * 100)
 
   // console.log({ startLp, goalLp, currentLp })
-  const startOffest =  currentLp - startLp
+  const startOffest = currentLp - startLp
   const goalOffset = goalLp - startLp
 
   // console.log({ startOffest, goalOffset, currentLp })
@@ -219,4 +233,92 @@ function getPreviousRankLP(lp) {
   }
 
   return 0
+}
+
+const loadScript = (FILE_URL, async = true, type = 'text/javascript') => {
+  return new Promise((resolve, reject) => {
+    try {
+      const scriptEle = document.createElement('script')
+      scriptEle.type = type
+      scriptEle.async = async
+      scriptEle.src = FILE_URL
+
+      scriptEle.addEventListener('load', (ev) => {
+        resolve({ status: true })
+      })
+
+      scriptEle.addEventListener('error', (ev) => {
+        reject({
+          status: false,
+          message: `Failed to load the script ${FILE_URL}`,
+        })
+      })
+
+      document.body.appendChild(scriptEle)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function listenForRankUpdatesWithAppWrite() {
+  loadScript('https://cdn.jsdelivr.net/npm/appwrite@16.0.0')
+    .then(async (result) => {
+      const {
+        id,
+        appWriteProjectId,
+        appWriteDatabaseId,
+        appWriteCollectionId,
+      } = getConfig()
+      if (!id) {
+        console.error('missing from URL: id')
+        throw new Error('missing from URL: id')
+      }
+      if (!appWriteProjectId) {
+        console.error('missing from URL: appwrite_project_id')
+        throw new Error('missing from URL: appwrite_project_id')
+      }
+      if (!appWriteDatabaseId) {
+        console.error('missing from URL: appwrite_database_id')
+        throw new Error('missing from URL: appwrite_database_id')
+      }
+      if (!appWriteCollectionId) {
+        console.error('missing from URL: appwrite_collection_id')
+        throw new Error('missing from URL: appwrite_collection_id')
+      }
+
+      // console.log(`Connecting to AppWrite project: ${appWriteProjectId}, database: ${appWriteDatabaseId}, collection: ${appWriteCollectionId}`)
+
+      const { Client, Databases } = Appwrite
+      const client = new Client()
+
+      client
+        .setEndpoint('https://cloud.appwrite.io/v1')
+        .setProject(appWriteProjectId)
+
+      const databases = new Databases(client)
+
+      const listResult = await databases.listDocuments(
+        appWriteDatabaseId,
+        appWriteCollectionId,
+        []
+      )
+
+      const document = listResult.documents.find((doc) => doc.sid === id)
+      if (!document) {
+        console.error('no player data')
+        return
+      }
+
+      try {
+        const playerData = JSON.parse(document.data)
+        // console.log('playerData', playerData)
+        updateRankData(playerData)
+      } catch (e) {
+        console.error(e)
+      }
+    })
+    .catch((err) => {
+      console.error('Failed to load script', err)
+    })
 }
