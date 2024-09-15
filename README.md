@@ -25,6 +25,8 @@ There are 3 parts to this:
 
 ### Server
 
+If you use the original user script `sf6-rank-watchrrr.user.js`, you'll need to run the server. If you don't know what Node.js is, I would recommend skipping this option and using the script `sf6-rank-watchrrr.appwrite.user.js` instead—this option has more configuration but will allow you to get up and running without setting up Node.js.
+
 Run the server using the following command:
 
     npm start
@@ -59,4 +61,4 @@ See the README in the [scripts/README.md](./scripts/README.md).
 
 ## Help / Support
 
-If you're trying to set this up and need help, you can [join the Discord](https://discord.gg/UDBr9v6mjA) and visit the **#sf6-rank-watchrrr** channel.
+If you're trying to set this up and need help, you can [join the Discord](https://discord.gg/UDBr9v6mjA) and visit the **#sf6-rank-watchrrr** channel. Requires a Twitch account to gain access.
