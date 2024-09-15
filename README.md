@@ -8,6 +8,7 @@ A set of tools to provide Street Fighter 6 streamers with an overlay to watch th
   - [Client / Website / Overlay](#client--website--overlay)
   - [User script](#user-script)
 - [Credits](#credits)
+- [Help / Support](#help--support)
 
 ![](./cover.png)
 
@@ -53,3 +54,9 @@ See the README in the [scripts/README.md](./scripts/README.md).
 
 - Images property of Capcom Co., Ltd.
 - League Points data from [this spreadsheet](https://docs.google.com/spreadsheets/d/124KmfZzbTysS-qrZG5L-n2OXaepxdeHS4ipk3_043Rw/edit#gid=884923803)
+- [AppWrite](https://appwrite.io) as the persistence layer for one of the user script options
+
+
+## Help / Support
+
+If you're trying to set this up and need help, you can [join the Discord](https://discord.gg/UDBr9v6mjA) and visit the **#sf6-rank-watchrrr** channel.
