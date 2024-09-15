@@ -29,6 +29,8 @@ You can configure the following **in the URL**:
 2. Create a database in your project. Name it `sf6-rank-watchrrr`. Copy the database ID and save it for later.
 3. Create a collection. Name it `ranks`. Copy the collection ID and save it for later.
 
+Once it's installed, login to the Buckler site and then visit this API URL: `https://www.streetfighter.com/6/buckler/api/en/card/YOUR_USER_ID` where `YOUR_USER_ID` is obviously your user ID. You can get this number from the address bar when visiting your own profile on Buckler. This is the URL for the current highest ranking Manon: `https://www.streetfighter.com/6/buckler/api/en/card/3708958378` where `3708958378` is this player's user ID.
+
 You can configure the following **in localStorage**:
 
 | Key                    | Type    | Description                                                                   |
@@ -54,6 +56,8 @@ localStorage.setItem("appwrite_collection_id", collectionId);
 ## ☣️ sf6-rank-watchrrr.kv-server.user.js (internal only)
 
 This is intended for internal use only so I don't forget. The dependency is not yet publicly available so don't try to use it.
+
+Once it's installed, login to the Buckler site and then visit this API URL: `https://www.streetfighter.com/6/buckler/api/en/card/YOUR_USER_ID` where `YOUR_USER_ID` is obviously your user ID. You can get this number from the address bar when visiting your own profile on Buckler. This is the URL for the current highest ranking Manon: `https://www.streetfighter.com/6/buckler/api/en/card/3708958378` where `3708958378` is this player's user ID.
 
 You can configure the following **in localStorage**:
 
