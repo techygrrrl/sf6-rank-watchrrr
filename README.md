@@ -46,16 +46,8 @@ You may have to set your browser to allow unsafe content. To do this in Chrome, 
 
 ### User script
 
-Install the user script.
+See the README in the [scripts/README.md](./scripts/README.md).
 
-Once it's installed, login to the Buckler site and then visit this API URL: `https://www.streetfighter.com/6/buckler/api/en/card/YOUR_USER_ID` where `YOUR_USER_ID` is obviously your user ID. You can get this number from the address bar when visiting your own profile on Buckler. This is the URL for the current highest ranking Manon: `https://www.streetfighter.com/6/buckler/api/en/card/3708958378` where `3708958378` is this player's user ID.
-
-You can configure the following:
-
-| Key          | Type    | Description                                                                                                                       |
-| ------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| host         | string  | URI-encoded IP address of the [server](#server) to connect to including port, e.g. `10.0.0.87:55743` would be `10.0.0.87%3A55743` |
-| refresh_time | integer | Refresh time in seconds. Minimum interval is 60.                                                                                  |
 
 ## Credits
 
