@@ -296,20 +296,18 @@ function listenForRankUpdatesWithAppWrite() {
         .setEndpoint('https://cloud.appwrite.io/v1')
         .setProject(appWriteProjectId)
 
+      // Initial fetch
       const databases = new Databases(client)
-
       const listResult = await databases.listDocuments(
         appWriteDatabaseId,
         appWriteCollectionId,
         []
       )
-
       const document = listResult.documents.find((doc) => doc.sid === id)
       if (!document) {
         console.error('no player data')
         return
       }
-
       try {
         const playerData = JSON.parse(document.data)
         // console.log('playerData', playerData)
@@ -317,6 +315,22 @@ function listenForRankUpdatesWithAppWrite() {
       } catch (e) {
         console.error(e)
       }
+
+      // Subscribe to realtime updates
+      client.subscribe('documents', (response) => {
+        if (response.payload.sid !== id) {
+          console.warn('unknown update event', response)
+          return
+        }
+
+        try {
+          const playerData = JSON.parse(response.payload.data)
+          // console.log('playerData', playerData)
+          updateRankData(playerData)
+        } catch (e) {
+          console.error(e)
+        }
+      })
     })
     .catch((err) => {
       console.error('Failed to load script', err)
