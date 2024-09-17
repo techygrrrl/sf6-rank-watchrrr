@@ -27,6 +27,7 @@ body {
 }
 
 .rank-up-progress__username {
+  display: block;
 }
 
 .rank-up-progress__lp-layout {
