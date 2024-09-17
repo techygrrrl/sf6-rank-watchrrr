@@ -1,3 +1,7 @@
+⚠️ These docs may be out of date. See the [Wiki](https://github.com/techygrrrl/sf6-rank-watchrrr/wiki).
+
+---
+
 # User Scripts
 
 Various user scripts have been added throughout the lifetime of this project.
