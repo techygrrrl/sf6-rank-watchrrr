@@ -1,9 +1,6 @@
 // ==UserScript==
-// @name        Watch the rank (including LP) for a Street Fighter 6 profile
+// @name        [Node] Watch the rank for a Street Fighter 6 profile
 // @match       https://www.streetfighter.com/6/buckler/api/en/card/*
-// @grant       none
-// @version     1.0
-// @author      -
 // @description https://github.com/techygrrrl/sf6-rank-watchrrr
 // ==/UserScript==
 
